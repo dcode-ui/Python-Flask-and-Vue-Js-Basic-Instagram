@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block main %}
+<div id="app">
+    <div class="tophead">
+        <div class="container">
+            <app-header></app-header>
+        </div>
+    </div>
+    <main>
+        <div class="container">
+            <!-- component matched by the route will render here -->
+            <router-view></router-view>
+        </div>
+    </main>
+</div>
+{% endblock %}
