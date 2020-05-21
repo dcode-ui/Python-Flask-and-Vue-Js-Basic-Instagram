@@ -8,29 +8,29 @@ Vue.component('app-header', {
         <p id="logo">{{head}}</p>
     </div>
       <div class="controls">
-        <ul class="cc">
-            <li class="">
-            <router-link class="" to="/">Home</router-link>
-          </li>
-          <li class="" v-show="!this.$root.$data.isLogin">
-            <router-link class="" to="/login">Login</router-link>
-          </li>
-          <li class="" v-show="!this.$root.$data.isLogin">
-            <router-link class="" to="/register">Register</router-link>
-          </li>
-          <li class="">
-            <router-link class="" to="/explore">Explore</router-link>
-          </li>
-          <li class="">
-            <router-link class="" to="/posts/new">Make a Post</router-link>
-          </li>
-          <li class="">
-            <router-link class="" :to="'/users/'+ this.$root.$data.userID ">My Profile</router-link>
-          </li>
-          <li class="" v-show="this.$root.$data.isLogin">
-            <router-link class="" to="/logout"><span @click="logout">Logout</span></router-link>
-          </li>
-        </ul>
+      <ul class="cc">
+      <li class="">
+      <router-link class="" to="/">Home</router-link>
+        </li>
+        <li class="" v-show="!this.$root.$data.isLogin">
+        <router-link class="" to="/login">Login</router-link>
+        </li>
+        <li class="" v-show="!this.$root.$data.isLogin">
+        <router-link class="" to="/register">Register</router-link>
+        </li>
+        <li class="">
+        <router-link class="" to="/explore">Explore</router-link>
+        </li>
+        <li class="">
+        <router-link class="" to="/posts/new">Make a Post</router-link>
+        </li>
+        <li class="">
+        <router-link class="" :to="'/users/'+ this.$root.$data.userID ">My Profile</router-link>
+        </li>
+        <li class="" v-show="this.$root.$data.isLogin">
+        <router-link class="" to="/logout"><span @click="logout">Logout</span></router-link>
+        </li>
+  </ul>
       </div>
     </nav>
     `,
@@ -56,7 +56,7 @@ Vue.component('app-header', {
                     if(data.message == "logged out")
                     {
                         localStorage.clear()
-                        this.$root.$data.isLogin = false
+                        this.$root.$data.isLogin = true
                         router.push({ path: `/logout` })
                     }
                     else
@@ -66,7 +66,6 @@ Vue.component('app-header', {
                 })
             })
             localStorage.clear()
-            this.$root.$data.isLogin = false
             router.push({ path: `/logout` })
 
             
@@ -189,7 +188,7 @@ const Explore = Vue.component('explore',{
 });
 const Login = Vue.component('login', {
    template: `
-    <div class="justify-content-center">
+    <div class="center-align">
         <div class="form_control">
             <form id="login_form" @submit.prevent="handleSubmit">
                 <span>Login to your account</span>
@@ -261,7 +260,7 @@ const Logout = Vue.component('logout', {
  });
 const Register = Vue.component('register', {
     template: `
-    <div class="justify-content-center">
+    <div class="center-align">
     <div class="form_control">
         <form id="register_form" ref="register_form" @submit.prevent="handleSubmit" enctype=multipart/form-data>
             <span>Let's get you registered!</span>
@@ -434,7 +433,7 @@ const userProfile = Vue.component('userprofile', {
                             <p id="pt">Followers</p>
                         </div>
                     </div>
-                    <button>Follow</button>
+                    <button @click="follow(uid)">Follow</button>
                 </div>
             </div>
             <div class="post_grid">
@@ -535,7 +534,7 @@ let app = new Vue({
     router,
     data:
     {
-        isLogin:true,
+        isLogin:false,
         userID:localStorage.getItem('user_id')
     }
 

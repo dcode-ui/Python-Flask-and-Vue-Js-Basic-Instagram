@@ -64,7 +64,7 @@ class Follows(db.Model):
 
     def __init__(self,user_id,follower_id):
         self.user_id = user_id
-        self.post_id = follower_id
+        self.follower_id = follower_id
     
     def __repre__(self):
         return '<Caption %r>' % self.follower_id

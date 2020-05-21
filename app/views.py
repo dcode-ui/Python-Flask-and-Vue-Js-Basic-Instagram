@@ -9,9 +9,7 @@ import datetime
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 #Authentication
-from .models import Users
-from .models import Posts
-from .models import Likes
+from .models import *
 import jwt
 
 #pbkdf2:sha256:150000$yXqrVzdv$ea6a0caaf36860120a76012a6a7cfca392a0e9e6e271a635cc183ee5ef20436d
@@ -176,3 +174,15 @@ def like_post(post_id):
         print(like)
 
         return make_response({"message":"liked"})
+
+@app.route('/api/users/<int:user_idf>/follow', methods = ['POST'])
+def follow(user_idf):
+    req = request.get_json()
+    auth = request.headers.get('Authorization')
+    verify = jwt.decode(auth.split()[1],app.config['SECRET_KEY'])
+    if db.session.query(Users).filter_by(email=verify['email']).first():
+        follow = Follows(req['uid'],user_idf)
+        db.session.add(follow)
+        db.session.commit()
+        return make_response({"message":"Followed"})
+    return make_response({"message":"error processing request"})
