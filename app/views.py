@@ -11,7 +11,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 #Authentication
 from .models import Users
 from .models import Posts
+from .models import Likes
 import jwt
+
 #pbkdf2:sha256:150000$yXqrVzdv$ea6a0caaf36860120a76012a6a7cfca392a0e9e6e271a635cc183ee5ef20436d
 #create full image path
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -24,10 +26,18 @@ def mkurl(loca,file):
         return s + file
   #  s = "/static/uploads/"
     #return s+file
+def popuEX(x,tup):
+    res ={}
+    res['user_id'] = tup[x].Users.user_id
+    res['username'] = tup[x].Users.username
+    res['postphoto'] = tup[x].Posts.photo
+    res['caption'] = tup[x].Posts.caption
+    return res
 
 
-@app.route('/')
-def index():
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def index(path):
     return render_template('index.html')
 
 @app.route('/api/users/register', methods = ['POST'])
@@ -98,7 +108,6 @@ def get_user_posts(user_idx):
             res['caption'] = post.caption
             res['postphoto'] = post.photo
             user_postOut.append(res)
-            print(user_posts)
 
         ures = {}
         ures['firstname'] = user.firstname
@@ -133,37 +142,37 @@ def add_post(user_id):
 
 @app.route('/api/posts', methods = ['GET'])
 def get_all_posts():
+    explorePosts = db.session.query(Users,Posts).outerjoin(Posts, Users.user_id == Posts.user_id).all()
     posts = db.session.query(Posts)
     post_out = []
+    expost_out = []
 
-    for post in posts:
-        res = {}
-        res['user_id'] = post.user_id
-        res['caption'] = post.caption
-        res['postphoto'] = post.photo
-        post_out.append(res)
-    return jsonify(post_out)
+    for r in explorePosts:
+        if r[1] == None:
+            pass
+        else:   
+            res = {}
+            nl = db.session.query(Likes).filter_by(post_id=r.Posts.post_id).count()
+            res['post_id'] = r.Posts.post_id
+            res['user_id'] = r.Users.user_id
+            res['username'] = r.Users.username
+            res['userphoto'] = r.Users.profile_photo
+            res['caption'] = r.Posts.caption
+            res['postphoto'] = r.Posts.photo
+            res['posted_on'] = r.Posts.created_on
+            res['num_likes'] = nl
+            expost_out.append(res)
+    return jsonify(expost_out)
 
 @app.route('/api/posts/<int:post_id>/like', methods = ['POST'])
 def like_post(post_id):
-    return make_response({"message":"this post was like"})
-"""
-@app.route('/api/upload', methods=['POST'])
-def upload():
-    form = UploadForm()
-    if request.method == 'POST' and form.validate_on_submit():
-        description = form.description.data
-        photo = form.photo.data
-        filename = secure_filename(photo.filename)
-        print(filename)
-        photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    req = request.get_json()
+    auth = request.headers.get('Authorization')
+    verify = jwt.decode(auth.split()[1],app.config['SECRET_KEY'])
+    if db.session.query(Users).filter_by(email=verify['email']).first():
+        like = Likes(req['user_id'],post_id)
+        db.session.add(like)
+        db.session.commit()
+        print(like)
 
-        return {
-            "message": "File Upload Successful",
-            "filename": filename,
-            "description": description
-            }
-    else:
-        return 'filename'
-        """
-    
+        return make_response({"message":"liked"})

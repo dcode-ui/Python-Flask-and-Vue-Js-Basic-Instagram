@@ -1,7 +1,7 @@
 body
 {
     font-family: 'Open Sans', sans-serif;
-    background-color: rgb(248, 248, 248);
+    background-color: hsl(0, 0%, 97%);
 }
 .user-personal
 {
@@ -93,6 +93,7 @@ main
     width: 100vw;
     background-color: #ffffff;
     border-bottom: 2px solid #ff578170;
+    z-index: 1;
 }
 .mainh
 {
@@ -140,4 +141,311 @@ ul > li > a
     color: #000000;
     text-transform: uppercase;
     font-weight: 600;
+}
+/*Feed*/
+#feed-i
+{
+    width: 800px;
+    border: 1px solid rgb(212, 212, 212);
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #ffffff;
+    margin-bottom: 20px;
+}
+.sd
+{
+    width: 800px;
+}
+
+#feed-i > #xfeed
+{
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 70px;
+    padding: 10px;
+
+}
+
+#feed-i > img
+{
+    width: 800px;
+    height: 800px;
+    object-fit: cover;
+}
+
+/*Post*/
+.center-align
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 70%;
+}
+.makenew > a > button
+{
+    width: 150px;
+    height: 50px;
+    border:2px solid #ff578170;
+    border-radius:5px;
+    background-color: #ff578170;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 16px;
+    transition: ease-out 0.3s;
+}
+.form_control
+{
+    position: relative;
+    padding: 20px;
+    width: 700px;
+    height: 700px;
+    top: 100px;
+}
+.form_control > h3
+{
+    position: relative;
+    font-weight: bold;
+    left: 50px;
+}
+#post_form
+{
+    background-color: #ffffff;
+    padding: 30px;
+    margin: auto;
+    margin-top: 10px;
+    width: 600px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 58px 0px rgba(209,209,209,0.3);
+
+}
+.pbutton
+{
+    display: flex;
+    justify-content: center;
+}
+
+label
+{
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.form-field > button
+{
+    position: relative;
+    width: 80%;
+    height: 50px;
+    border:2px solid #ff578170;
+    border-radius:5px;
+    background-color: #ff578170;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 20px;
+    transition: ease-out 0.3s;
+}
+
+.form-field > button:hover
+{
+    position: relative;
+    border:2px solid #ff578170;
+    border-radius:5px;
+    background-color: #ffffff;
+    color: #ff578170;
+    font-weight: 800;
+    font-size: 20px;
+    
+}
+
+.form-field
+{
+    margin-top: 20px;
+}
+.form-field > textarea
+{
+    border: 3px solid #f3f3f3;
+    border-radius: 5px;
+}
+
+.form-field > textarea::placeholder
+{
+    color: #f3f3f3;
+}
+
+/*explore*/
+#explore-feed
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+#ud
+{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+}
+#ud > a > img
+{
+    border-radius: 50px;
+}
+
+#uname
+{
+    margin: auto auto auto 0px;
+    text-align: left;
+}
+#uname
+{
+    margin-left: 10px;
+    display: inline;
+    
+}
+#uname > p
+{
+    display: table-cell;
+    vertical-align: middle;
+    font-size: 18px;
+    font-weight: 800;
+}
+#caption
+{
+    padding: 10px;
+    font-size: 13px;
+}
+
+#post-date
+{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    height: 70px;
+}
+#post-date > p
+{
+    font-size: 15px;
+    font-weight: 800;
+
+}
+#post-date > #likes
+{
+    margin-right: 1px;
+    margin-top: auto;
+    margin-bottom: auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+#post-date > #postDate > p
+{
+    position: relative;
+    margin:auto;
+    font-size: 15px;
+    font-weight: 800;
+}
+#post-date > #postDate
+{
+    margin-right: 1px;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+#post-date > #likes > p
+{
+    position: relative;
+    margin:auto;
+    margin-left: 5px;
+    font-size: 18px;
+    font-weight: 800;
+}
+.makenew
+{
+    position: relative;
+    width: 150px;;
+    left: 50px;
+}
+
+.posti
+{
+    display: flex;
+    flex-direction: row;
+    width: 900px;
+    
+}
+
+#stats
+{
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: 100%;
+}
+
+#nstats
+{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#num-post
+{
+    width: 100px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+}
+
+#num-post > p
+{
+    display: inline;
+    margin:auto;
+    text-align: center;
+    font-weight: 900;
+    font-size: 20px;
+    top:20px;
+
+
+}
+#num-post > #pt
+{
+    margin:auto;
+    text-align: center;
+    font-weight: 900;
+    font-size: 20px;
+}
+
+#stats > button
+{
+    position: relative;
+    margin-top: 30px;
+    width: 80%;
+    height: 50px;
+    border:2px solid #ff578170;
+    border-radius:5px;
+    background-color: #ff578170;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 20px;
+    transition: ease-out 0.3s;
+}
+
+#stats > button:hover
+{
+    position: relative;
+    margin-top: 30px;
+    border:2px solid #ff578170;
+    border-radius:5px;
+    background-color: #ffffff;
+    color: #ff578170;
+    font-weight: 800;
+    font-size: 20px;
+    
 }

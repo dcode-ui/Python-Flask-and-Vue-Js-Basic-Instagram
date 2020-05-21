@@ -99,12 +99,33 @@ const Home = Vue.component('home', {
 
 const Explore = Vue.component('explore',{
     template:`
-    <div class="explore-control">
-        <router-link :to="'/users/'+id">{{name}}</router-link>
-        <div id="explore-feed">
-            <div id="feed-i" v-for="feed in feeds" :key="feed.post_id">
-                <router-link :to="'/users/'+feed.user_id"><button>View</button></router-link>
-                <img :src="feed.postphoto"/>
+    <div class="center-align">
+        <div class="posti">
+            <div id="explore-feed">
+                <div id="feed-i" v-for="feed in feeds" :key="feed.post_id">
+                    <div id="xfeed">
+                        <div id="ud">
+                            <router-link :to="'/users/'+feed.user_id"><img :src="feed.userphoto" width="45px" height="45px"/></router-link>
+                            <div id="uname"><p>{{feed.username}}</p></div>
+                        </div>
+                    </div>                
+                    <img :src="feed.postphoto"/>
+                    <div class="sd">
+                    <div id="caption">
+                        <p>{{feed.caption}}</p>
+                    </div>
+                    <div id="post-date">
+                        <span id="likes">
+                        <img src="/static/img/heart.svg" @click="like(feed.post_id)" v-if="feed.num_likes >= 1"/>
+                        <img src="/static/img/empty.svg" @click="like(feed.post_id)" v-if="feed.num_likes == 0"/>
+                        <p>{{feed.num_likes}} Likes</p></span>
+                        <span id="postDate"><p @click="like(feed.post_id)">{{feed.posted_on}}</p></span>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            <div class="makenew">
+                <router-link class="" to="/posts/new"><button>Make a Post</button></router-link>
             </div>
         </div>
     </div>`,
@@ -112,10 +133,35 @@ const Explore = Vue.component('explore',{
         return{
             name:'explore',
             id:23,
-            feeds:[]
+            uid:localStorage.getItem('user_id'),
+            feeds:[],
+            location:''
         }
     },
     methods:{
+        like(id)
+        {
+            let req = {
+                user_id:this.uid,
+            }
+            x = JSON.stringify(req)
+            fetch(`${window.origin}/api/posts/${id}/like`,{
+                method: 'POST',
+                body: x,
+                headers: {
+                    'Authorization':'Bearer '+localStorage.getItem('acctoken'),
+                    'content-type': 'application/json',
+                    'X-CSRFToken': token
+                },
+                credentials: 'same-origin'
+            })
+            .then((resp) => {
+                resp.json().then((data)=>{
+                    console.log(data)
+                })
+            })
+            
+        },
         n()
         {
             console.log(feed)
@@ -301,9 +347,9 @@ const Register = Vue.component('register', {
 
 const newPost = Vue.component('makepost',{
     template:
-    `<div class="justify-content-center">
-        <div id="err_mes">{{error_handle}}</div>
+    `<div class="center-align">
         <div class="form_control">
+            <h3>New Post</h3>
             <form id="post_form" ref="post_form" @submit.prevent="handleSubmit" enctype=multipart/form-data>
                 <div class="form-field">
                     <label for="post">Photo</label><br>
@@ -311,21 +357,19 @@ const newPost = Vue.component('makepost',{
                 </div>    
                 <div class="form-field">
                     <label for="caption">Caption</label><br>
-                    <textarea class="form-control"  name="caption" rows="2" v-model="caption"></textarea>
+                    <textarea class="form-control"  name="caption" rows="2" v-model="caption" placeholder="What would you like to say?"></textarea>
                 </div>
-                <div class="form-field">
+                <div class="form-field pbutton">
                     <button type="submit">Post</button>
                 </div>
             </form>
         </div>
-        {{this.$root.$data.isLogin}}
     </div>
         `,
     data()
     {
         return{
-            caption:'',
-            error_handle: ''
+            caption:''
             
         }
     },
@@ -346,16 +390,20 @@ const newPost = Vue.component('makepost',{
                 })
                 .then((resp) => {
                     resp.json().then((data)=>{
-                        this.error_handle = data.message
+                        alert(data.message)
                         
                     })
                 })
+                .catch(err)
+                {
+                    console.log(err)
+                }
                 
 
             }
             else
             {
-                this.error_handle = "Please fill out the caption"
+                alert("Please fill out the the form")
             }
             
             
@@ -375,6 +423,19 @@ const userProfile = Vue.component('userprofile', {
                     <p id="member">Member since {{profile[0].joined}}</p>
                     <p id="bio">{{profile[0].biography}}</p>
                 </div>
+                <div id="stats">
+                    <div id="nstats">
+                        <div id="num-post">
+                            <p id="pnum">{{userPost.length}}</p>
+                            <p id="pt">Posts</p>
+                        </div>
+                        <div id="num-post">
+                            <p id="pnum">{{userPost.length}}</p>
+                            <p id="pt">Followers</p>
+                        </div>
+                    </div>
+                    <button>Follow</button>
+                </div>
             </div>
             <div class="post_grid">
                 <div class=" post_item" v-for="ps in userPost" :key="ps.caption">
@@ -393,6 +454,7 @@ const userProfile = Vue.component('userprofile', {
     },
     created()
     {
+        console.log(this.uid)
         fetch(`${window.origin}/api/users/${this.uid}/posts`,{
             method: 'POST',
             headers: {
