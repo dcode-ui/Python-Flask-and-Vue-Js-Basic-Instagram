@@ -68,13 +68,17 @@ def register():
 def login():
     user = None
     req = request.get_json()
-    if req['email']:
+    if req['email'] and db.session.query(Users).filter_by(email=req['email']).first():
         user = db.session.query(Users).filter_by(email=req['email']).first()
+    else:
+        return make_response({"message":"There is no user with the credentials entered"})
     password = check_password_hash(user.password,req['password'])
     if password:
         access_token = jwt.encode({'user_id':user.user_id, 'email':user.email},app.config['SECRET_KEY'])
         userD = {"user_id":user.user_id,"email":user.email}
         return make_response({"token":access_token.decode('UTF-8'), "udetails":userD})
+    else:
+        return make_response({"message":"Incorrect Password"})
     return make_response({"message":"Invalid Password"})
     
 
@@ -97,9 +101,13 @@ def get_user_posts(user_idx):
     if db.session.query(Users).filter_by(email=verify['email']).first():
         user = db.session.query(Users).filter_by(user_id=user_idx).first()
         user_posts = db.session.query(Posts).filter_by(user_id=user_idx).all()
+        followcount = db.session.query(Follows).filter_by(follower_id=user_idx).count()
         user_postOut = []
         user_profile = []
 
+        if followcount == None:
+            followcount = 0
+        
         for post in user_posts:
             res = {}
             res['user_id'] = post.user_id
@@ -115,7 +123,7 @@ def get_user_posts(user_idx):
         ures['profile_photo'] = user.profile_photo
         ures['joined'] = user.joined_on
         user_profile.append(ures)
-        userP ={"profileDetails": user_profile, "userPost":user_postOut}
+        userP ={"profileDetails": user_profile, "userPost":user_postOut,"followcount":followcount}
         if userP != {}:
             return jsonify(userP)
         return make_response({"message":"Error finding data"})
@@ -177,11 +185,11 @@ def like_post(post_id):
 
 @app.route('/api/users/<int:user_idf>/follow', methods = ['POST'])
 def follow(user_idf):
-    req = request.get_json()
     auth = request.headers.get('Authorization')
     verify = jwt.decode(auth.split()[1],app.config['SECRET_KEY'])
     if db.session.query(Users).filter_by(email=verify['email']).first():
-        follow = Follows(req['uid'],user_idf)
+        follow = Follows(verify['user_id'],user_idf)
+        print(follow) 
         db.session.add(follow)
         db.session.commit()
         return make_response({"message":"Followed"})

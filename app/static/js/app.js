@@ -1,46 +1,58 @@
 /* Add your Application JavaScript */
 
 //
-Vue.component('app-header', {
+const Nav = Vue.component('app-header', {
     template: `
     <nav class="mainh">
-    <div class="sym">
-        <p id="logo">{{head}}</p>
-    </div>
-      <div class="controls">
-      <ul class="cc">
-      <li class="">
-      <router-link class="" to="/">Home</router-link>
-        </li>
-        <li class="" v-show="!this.$root.$data.isLogin">
-        <router-link class="" to="/login">Login</router-link>
-        </li>
-        <li class="" v-show="!this.$root.$data.isLogin">
-        <router-link class="" to="/register">Register</router-link>
-        </li>
-        <li class="">
-        <router-link class="" to="/explore">Explore</router-link>
-        </li>
-        <li class="">
-        <router-link class="" to="/posts/new">Make a Post</router-link>
-        </li>
-        <li class="">
-        <router-link class="" :to="'/users/'+ this.$root.$data.userID ">My Profile</router-link>
-        </li>
-        <li class="" v-show="this.$root.$data.isLogin">
-        <router-link class="" to="/logout"><span @click="logout">Logout</span></router-link>
-        </li>
-  </ul>
+      <div class="sym">
+        <p id="logo" @click="cstate">{{head}}</p>
       </div>
+      <div class="controls">
+            <ul class="cc">
+                <li class="">
+                <router-link class="" to="/">Home</router-link>
+                </li>
+                <li class="" v-show="!statec">
+                <router-link class="" to="/login">Login</router-link>
+                </li>
+                <li class="" v-show="!statec">
+                <router-link class="" to="/register">Register</router-link>
+                </li>
+                <li class="">
+                <router-link class="" to="/explore">Explore</router-link>
+                </li>
+                <li class="">
+                <router-link class="" to="/posts/new">Make a Post</router-link>
+                </li>
+                <li class="">
+                <router-link class="" :to="'/users/'+ this.$root.$data.userID ">My Profile</router-link>
+                </li>
+                <li class="" v-show="statec">
+                <router-link class="" to="/logout"><span @click="logout">Logout</span></router-link>
+                </li>
+            </ul>
+      </div>
+      
     </nav>
     `,
     data:function(){
         return{
-            head:"photogram"
+            head:"photogram",
+            isLogged: true,
+            valCheck : localStorage.getItem('acctoken')
         }
     },
     methods:
     {
+        sed()
+        {
+            this.$root.$data.isLogin = !this.$root.$data.isLogin
+        },
+        cstate()
+        {
+            this.isLogged = !this.isLogged
+        },
+
         logout()
          {
             fetch(`${window.origin}/api/auth/logout`,{
@@ -56,7 +68,8 @@ Vue.component('app-header', {
                     if(data.message == "logged out")
                     {
                         localStorage.clear()
-                        this.$root.$data.isLogin = true
+                        this.isLogin = !this.isLogged
+                        this.sed()
                         router.push({ path: `/logout` })
                     }
                     else
@@ -71,6 +84,16 @@ Vue.component('app-header', {
             
          }
         
+    },
+    computed:
+    {
+        statec()
+        {
+            let x = !this.isLogged 
+            let v = this.$root.$data.isLogin
+            return v
+
+        }
     }
 });
 
@@ -86,9 +109,17 @@ Vue.component('app-footer', {
 
 const Home = Vue.component('home', {
     template: `
-     <div class="jumbotron">
-         <h1>Photogram</h1>
-         <p class="lead">WTF.</p>
+        <div id="gridm">
+            <div id="gitem">
+                <img src="static/img/people.jpg" width="600" height="550"/>
+            </div>
+            <div id="gitem">
+                <div>
+                    <h1>Join Photogram Now!</h1>
+                    <h4>Connect with great friends</h4>
+                </div>
+            </div>
+        </div>
      </div>
     `,
      data: function() {
@@ -134,7 +165,8 @@ const Explore = Vue.component('explore',{
             id:23,
             uid:localStorage.getItem('user_id'),
             feeds:[],
-            location:''
+            location:'',
+            likeval:0
         }
     },
     methods:{
@@ -191,20 +223,22 @@ const Login = Vue.component('login', {
     <div class="center-align">
         <div class="form_control">
             <form id="login_form" @submit.prevent="handleSubmit">
-                <span>Login to your account</span>
-                <div class="form-field">
-                    <label for="email">Email</label><br>
-                    <input type="text" name="email" ref="email" v-model="email"/>
-                </div>
-                <div class="form-field">
-                    <label for="password">Password</label><br>
-                    <input type="password" name="password" ref="password" v-model="password"/>
-                </div>
-                <div class="form-field">
-                    <button type="submit">Login</button>
+                <span><h3>Login to your account</h3></span>
+                    <div id = "post_form">
+                    <div class="form-field">
+                        <label @click="sed()" for="email">Email</label><br>
+                        <input type="text" name="email" ref="email" v-model="email"/>
+                    </div>
+                    <div class="form-field">
+                        <label for="password">Password</label><br>
+                        <input type="password" name="password" ref="password" v-model="password"/>
+                    </div>
+                    <div class="form-field pbutton">
+                        <button type="submit">Login</button>
+                    </div>
                 </div>
             </form>
-            <span>Don't have an account?<router-link class="" to="/register">Register</router-link></span>
+            <span id="xx">Don't have an account?<router-link class="" to="/register">Register</router-link></span>
         </div>
     </div>
    `,
@@ -216,33 +250,58 @@ const Login = Vue.component('login', {
     },
     methods:
     {
+        sed()
+        {
+            this.$root.$data.isLogin = !this.$root.$data.isLogin
+        },
         handleSubmit()
         {
-            let req = {
-                email:this.email,
-                password:this.password
+            if(this.email == '' || this.password == '')
+            {
+                alert('Please fill out the form completely')
             }
-            x = JSON.stringify(req)
-            //console.log(x)
-            fetch(`${window.origin}/api/auth/login`,{
-                method: 'POST',
-                body: x,
-                headers: {
-                    'content-type': 'application/json',
-                    'X-CSRFToken': token
-                },
-                credentials: 'same-origin'
-            })
-            .then((resp) => {
-                resp.json().then((data)=>{
-                    localStorage.setItem('acctoken', data.token)
-                    localStorage.setItem('user_id',data.udetails.user_id)
-                    localStorage.setItem('user_email',data.udetails.email)
-                    this.$root.$data.isLogin = true
-                    router.push({ path: `/users/${localStorage.getItem('user_id')}` })
-                    //console.log(data.token)
+            else
+            {
+                let req = {
+                    email:this.email,
+                    password:this.password
+                }
+                
+                x = JSON.stringify(req)
+                //console.log(x)
+                fetch(`${window.origin}/api/auth/login`,{
+                    method: 'POST',
+                    body: x,
+                    headers: {
+                        'content-type': 'application/json',
+                        'X-CSRFToken': token
+                    },
+                    credentials: 'same-origin'
                 })
-            })
+                .then((resp) => {
+                    resp.json().then((data)=>{
+                        if(data.udetails)
+                        {
+                            localStorage.setItem('acctoken', data.token)
+                            localStorage.setItem('user_id',data.udetails.user_id)
+                            localStorage.setItem('user_email',data.udetails.email)
+                            this.$root.$data.userID = data.udetails.user_id
+                            //console.log(typeof this.$root.$data.userID)
+                            this.sed()
+                            router.push({ path: `/users/${localStorage.getItem('user_id')}` })
+                        }
+                        else
+                        {
+                            alert(data.message)
+                        }
+                        
+                        
+                        //console.log(data.token)
+                    })
+                })
+
+            }
+            
         }
     }
 });
@@ -263,48 +322,50 @@ const Register = Vue.component('register', {
     <div class="center-align">
     <div class="form_control">
         <form id="register_form" ref="register_form" @submit.prevent="handleSubmit" enctype=multipart/form-data>
-            <span>Let's get you registered!</span>
-            <div class="form-field">
-                <label for="username">Username</label><br>
-                <input type="text" name="username" ref="username" v-model="username"/>
-            </div>
-            <div class="form-field">
-                <label for="firstname">Firstname</label><br>
-                <input type="text" name="firstname" ref="firstname" v-model="firstname"/>
-            </div>
-            <div class="form-field">
-                <label for="lastname">Lastname</label><br>
-                <input type="text" name="lastname" ref="lastname" v-model="lastname"/>
-            </div>
-            <div class="form-field">
-                <label for="email">Email</label><br>
-                <input type="text" name="email" ref="email" v-model="email"/>
-            </div>
-            <div class="form-field">
-                <label for="location">Location</label><br>
-                <input type="text" name="location" ref="location" v-model="location"/>
-            </div>
-            <div class="form-field">
-                <label for="biography">Biography</label><br>
-                <textarea class="form-control"  name="biography" rows="2" v-model="biography"></textarea>
-            </div>
-            <div class="form-field">
-                <label for="profile">Profile Photo</label><br>
-                <input type="file" name="pphoto" ref="pphoto"/>
-            </div>
-            <div class="form-field">
-                <label for="password">Password</label><br>
-                <input type="password" name="password" ref="password" v-model="password"/>
-            </div>
-            <div class="form-field">
-                <label for="re-enter password">Re-Enter Password</label><br>
-                <input type="password" name="password_two" ref="password_two" v-model="password_two"/>
-            </div>
-            <div class="form-field">
-            <button type="submit">Register</button>
+            <span><h3>Let's get you registered!</h3></span>
+            <div id = "post_form">
+                <div class="form-field">
+                    <label for="username">Username</label><br>
+                    <input type="text" name="username" ref="username" v-model="username"/>
+                </div>
+                <div class="form-field">
+                    <label for="firstname">Firstname</label><br>
+                    <input type="text" name="firstname" ref="firstname" v-model="firstname"/>
+                </div>
+                <div class="form-field">
+                    <label for="lastname">Lastname</label><br>
+                    <input type="text" name="lastname" ref="lastname" v-model="lastname"/>
+                </div>
+                <div class="form-field">
+                    <label for="email">Email</label><br>
+                    <input type="text" name="email" ref="email" v-model="email"/>
+                </div>
+                <div class="form-field">
+                    <label for="location">Location</label><br>
+                    <input type="text" name="location" ref="location" v-model="location"/>
+                </div>
+                <div class="form-field">
+                    <label for="biography">Biography</label><br>
+                    <textarea class="form-control"  name="biography" rows="2" v-model="biography"></textarea>
+                </div>
+                <div class="form-field">
+                    <label for="profile">Profile Photo</label><br>
+                    <input type="file" name="pphoto" ref="pphoto"/>
+                </div>
+                <div class="form-field">
+                    <label for="password">Password</label><br>
+                    <input type="password" name="password" ref="password" v-model="password"/>
+                </div>
+                <div class="form-field">
+                    <label for="re-enter password">Re-Enter Password</label><br>
+                    <input type="password" name="password_two" ref="password_two" v-model="password_two"/>
+                </div>
+                <div class="form-field pbutton">
+                <button type="submit">Register</button>
+                </div>
             </div>
         </form>
-        <span>Already got an account?<router-link class="" to="/">Login</router-link></span>
+        <span id="xx">Already got an account?<router-link class="" to="/login">Login</router-link></span>
     </div>
 {{username}}
 </div>
@@ -324,6 +385,10 @@ const Register = Vue.component('register', {
         }
      },
      methods:{
+        sed()
+        {
+            this.$root.$data.isLogin = !this.$root.$data.isLogin
+        },
          handleSubmit(){
             
             let fdata = new FormData(document.getElementById('register_form'));
@@ -337,7 +402,22 @@ const Register = Vue.component('register', {
             })
             .then((resp) => {
                 resp.json().then((data)=>{
-                    console.log(data)
+                    if(data.udetails)
+                        {
+                            localStorage.setItem('acctoken', data.token)
+                            localStorage.setItem('user_id',data.udetails.user_id)
+                            localStorage.setItem('user_email',data.udetails.email)
+                            this.$root.$data.userID = data.udetails.user_id
+                            //console.log(typeof this.$root.$data.userID)
+                            this.sed()
+                            router.push({ path: `/users/${localStorage.getItem('user_id')}` })
+                        }
+                        else
+                        {
+                            alert(data.message)
+                        }
+                    //console.log(data)
+                    //router.push({ path: `/users/${localStorage.getItem('user_id')}` })
                 })
             })
          }
@@ -415,6 +495,7 @@ const userProfile = Vue.component('userprofile', {
     <div>
         <div>
             <div class="user-personal">
+            <div id="con">
                 <img :src="profile[0].profile_photo" id="uprofilepic"/>
                 <div class="user-text">
                     <h2>{{profile[0].firstname}} {{profile[0].lastname}}</h2>
@@ -422,6 +503,7 @@ const userProfile = Vue.component('userprofile', {
                     <p id="member">Member since {{profile[0].joined}}</p>
                     <p id="bio">{{profile[0].biography}}</p>
                 </div>
+            </div>
                 <div id="stats">
                     <div id="nstats">
                         <div id="num-post">
@@ -429,17 +511,18 @@ const userProfile = Vue.component('userprofile', {
                             <p id="pt">Posts</p>
                         </div>
                         <div id="num-post">
-                            <p id="pnum">{{userPost.length}}</p>
+                            <p id="pnum">{{followcount}}</p>
                             <p id="pt">Followers</p>
                         </div>
                     </div>
-                    <button @click="follow(uid)">Follow</button>
+                    <button v-show="followdisable != uid" @click="follow()">Follow</button>
                 </div>
             </div>
             <div class="post_grid">
                 <div class=" post_item" v-for="ps in userPost" :key="ps.caption">
-                    <img :src="ps.postphoto" />
+                    <img :src="ps.postphoto"/>
                 </div>
+                {{followcount}}
             </div>
         </div>
     </div>
@@ -448,8 +531,38 @@ const userProfile = Vue.component('userprofile', {
         return {
             uid:this.$route.params.uid,
             profile:[],
-            userPost:[]
+            userPost:[],
+            followers_:0
         }
+    },
+    methods:
+    {
+        follow()
+        {
+            fetch(`${window.origin}/api/users/${this.uid}/follow`,{
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer '+localStorage.getItem('acctoken'),
+                    'X-CSRFToken': token
+                },
+                credentials: 'same-origin'
+            })
+            .then((resp) => {
+                resp.json().then((data)=>{
+                    this.followers_+=1
+                    if(data.message == 'Followed')
+                    {
+                        alert('Followed')
+                    }
+                    else
+                    {
+                        alert('error following')
+                    }
+                    
+                })
+            })
+        }
+
     },
     created()
     {
@@ -466,10 +579,23 @@ const userProfile = Vue.component('userprofile', {
             resp.json().then((data)=>{
                 this.profile = data.profileDetails
                 this.userPost = data.userPost
+                this.followers_ = parseInt(data.followcount)
                 
             })
         })
         console.log(`${window.origin}/${this.uid}`)
+    },
+    computed:
+    {
+        followdisable()
+        {
+            return localStorage.getItem('user_id')
+        },
+
+        followcount()
+        {
+            return this.followers_
+        }
     }
 })
 
@@ -494,7 +620,7 @@ const router = new VueRouter({
         {path: "/explore", component: Explore, meta:{requiresAuth:true}},
         {path: "/posts/new", component: newPost, meta:{requiresAuth:true}},
         {path: "/users/:uid", component: userProfile, meta:{requiresAuth:true}},
-        {path: "/logout", component: Logout, meta:{requiresAuth:true}},
+        {path: "/logout", component: Logout},
         // Put other routes here
 
         // This is a catch all route in case none of the above matches
@@ -512,15 +638,9 @@ router.beforeEach((to,from,next)=>{
         }
         else
         {
-            try
-            {
-                router.replace('/login');
-            }
-            catch(err)
-            {
-                console.log(err)
-            }
+            router.replace('/login');
         }
+
     }
 
     //Allowing page to load
@@ -535,7 +655,7 @@ let app = new Vue({
     data:
     {
         isLogin:false,
-        userID:localStorage.getItem('user_id')
+        userID: localStorage.getItem('user_id')
     }
 
 

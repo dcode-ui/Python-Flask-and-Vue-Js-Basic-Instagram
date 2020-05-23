@@ -13,21 +13,28 @@ body
     padding-right: 30px;
     padding-bottom: 30px;
     border-radius: 10px;
+    justify-content: space-between;
     
 }
 
-.user-personal > img
+.user-personal > #con
+{
+    display: flex;
+    flex-direction: row;
+}
+#uprofilepic
 {
     width: 250px;
     height: 250px;
-    object-fit: cover;
     border-radius: 5px;
+    object-fit: cover;
 }
 
 .user-text
 {
     margin-left: 25px;
     font-weight: 600;
+    width: 400px;
 }
 
 .user-text h2
@@ -50,8 +57,8 @@ body
 
 .user-text > #bio
 {
-    width: 500px;
     margin-top: 15px;
+    position: relative;
 
 }
 
@@ -141,7 +148,26 @@ ul > li > a
     color: #000000;
     text-transform: uppercase;
     font-weight: 600;
+    transition: 1s ease-in-out;
 }
+ul > li > a:hover
+{
+    text-decoration: none;
+    color: #ff578170;
+    text-transform: uppercase;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+ul > li > a:active
+{
+    text-decoration: none;
+    color: #ff578170;
+    text-transform: uppercase;
+    font-size: 18px;
+    font-weight: 800;
+}
+
 /*Feed*/
 #feed-i
 {
@@ -235,6 +261,43 @@ label
     font-weight: 700;
 }
 
+.form-field > input
+{
+    width: 100%;
+    height: 50px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#register_form > span
+{
+    
+    position: relative;
+    font-weight: bold;
+    left: 50px;
+
+
+}
+#login_form > span
+{
+    
+    position: relative;
+    font-weight: bold;
+    left: 50px;
+
+
+}
+
+.form_control > span
+{
+    
+    position: relative;
+    margin-top: 20px;
+    font-weight: bold;
+    left: 50px;
+
+
+}
 .form-field > button
 {
     position: relative;
@@ -293,6 +356,7 @@ label
 #ud > a > img
 {
     border-radius: 50px;
+    object-fit: cover;
 }
 
 #uname
@@ -312,6 +376,8 @@ label
     vertical-align: middle;
     font-size: 18px;
     font-weight: 800;
+    text-decoration: none;
+    color: #000000;
 }
 #caption
 {
@@ -383,7 +449,7 @@ label
     display: flex;
     flex-direction: column;
     position: relative;
-    width: 100%;
+    width: 300px;
 }
 
 #nstats
@@ -454,4 +520,37 @@ label
     font-weight: 800;
     font-size: 20px;
     
+}
+.asd
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+#gridm
+{
+    display: flex;
+    flex-wrap: wrap;
+    box-shadow: 0px 0px 58px 0px rgba(209,209,209,0.3);
+    margin-top: 50px;
+}
+#gitem
+{
+
+    background-color: #ffffff;
+    position: relative;
+    width: 50%;
+}
+
+#gitem > img
+{
+    object-fit: cover;
+}
+
+#gitem
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
 }
